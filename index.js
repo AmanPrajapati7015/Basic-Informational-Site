@@ -1,26 +1,23 @@
-const http = require('http');
-const url = require('node:url');
-const fs = require('fs');
+require('dotenv').config();
+const express = require('express');
 
-const pathMap= new Map();
-pathMap['/'] = 'index';
-pathMap['/about'] = 'about';
-pathMap['/contact'] = 'contact-me';
+const app = express();
 
-
-
-const myserver = http.createServer((req, res)=>{
-
-  const path = req.url;
-  let filePath = (pathMap[path]) ? 'pages/'+pathMap[path]+'.html' : 'pages/error.html'
-  
-  const fileContent =  fs.readFileSync(filePath,'utf-8');
-  
-  res.writeHead(200, { 'Content-Type': 'text/html' });
-  res.write(fileContent);
-  res.end();
-
+app.get('/',(req, res)=>{
+  res.sendFile(__dirname+'/pages/index.html');
 })
 
+app.get('/about',(req, res)=>{
+  res.sendFile(__dirname+'/pages/about.html');
+})
 
-myserver.listen(8080);
+app.get('/contact',(req, res)=>{
+  res.sendFile(__dirname+'/pages/contact-me.html');
+})
+
+app.get('*',(req, res)=>{
+  res.sendFile(__dirname+'/pages/error.html');
+})
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, ()=>console.log(`running on port ${PORT}`));
